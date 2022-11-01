@@ -26,6 +26,28 @@ Future<Response> onRequest(RequestContext context) async {
 Future<Response> _get(RequestContext context) async {
   final emojiStatus = context.read<EmojiStatus>();
 
+  final uri = context.request.uri;
+  final method = context.request.method;
+  final connectionInfo = context.request.connectionInfo;
+  print('uri: $uri'); // uri: http://localhost:8080/
+  print('method: $method'); // method: HttpMethod.get
+  print('localPort: ${connectionInfo.localPort}'); // localPort: 8080
+
+  final queryParametersAll = uri.queryParametersAll;
+  print('queryParametersAll: $queryParametersAll');
+  // http://localhost:8080?name=Rahmi
+  // queryParametersAll: {name: [Rahmi]}
+  // http://localhost:8080?name=Rahmi&age=31
+  // queryParametersAll: {name: [Rahmi], age: [31]}
+
+  final queryParameters = uri.queryParameters;
+  print('queryParameters: $queryParameters');
+  // queryParameters: {name: Rahmi, age: 31}
+
+  final query = uri.query;
+  print('query: $query');
+  // query: name=Rahmi&age=31
+
   return Response.json(body: emojiStatus.toJson());
 }
 
