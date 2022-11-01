@@ -1,6 +1,6 @@
 import 'package:dart_frog/dart_frog.dart';
 
-import '../models/index.dart';
+import '../models/emoji_status.dart';
 
 EmojiStatus get _data {
   final statusList = <Status>[
