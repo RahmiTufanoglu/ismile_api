@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:meta/meta.dart';
 
+@immutable
 class EmojiStatus extends Equatable {
   const EmojiStatus({required this.status});
 
@@ -49,13 +51,8 @@ class Status extends Equatable {
   Map<String, dynamic> toJson() {
     final data = <String, dynamic>{};
     data['emoji'] = emoji;
-    //data['createdAt'] = createdAt;
     data['createdAt'] = createdAt.toIso8601String();
     return data;
-    //return {
-    //  'emoji': emoji,
-    //  'createdAt': createdAt,
-    //};
   }
 
   Status copyWith({String? emoji, DateTime? createdAt}) {
