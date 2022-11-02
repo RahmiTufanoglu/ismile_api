@@ -4,26 +4,56 @@ import 'dart:io';
 import 'package:dart_frog/dart_frog.dart';
 
 import '../models/emoji_status.dart';
+import '../models/emoji_status_data_source.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   switch (context.request.method) {
     case HttpMethod.get:
-      return _get(context);
+      return _get2(context);
     case HttpMethod.post:
-      return _post(context);
+      return _post2(context);
     case HttpMethod.put:
-      return _put(context);
+      return _put2(context);
     case HttpMethod.patch:
       return _patch(context);
     case HttpMethod.delete:
-      return _delete(context);
+      return _delete2(context);
     case HttpMethod.head:
     case HttpMethod.options:
       return Response(statusCode: HttpStatus.methodNotAllowed);
   }
 }
 
-Future<Response> _get(RequestContext context) async {
+Future<Response> _put(RequestContext context, String id, EmojiStatus emojiStatus) async {
+  final dataSource = context.read<EmojiStatusDataSource>();
+  final updatedEmojiStatus = EmojiStatus.fromJson(await context.request.json());
+  final newTodo = await dataSource.update(
+    id,
+    //EmojiStatus(status: updatedEmojiStatus.status),
+    emojiStatus.copyWith(
+      status: updatedEmojiStatus.status,
+    ),
+    //todo.copyWith(
+    //  title: updatedEmojiStatus.title,
+    //  description: updatedEmojiStatus.description,
+    //  isCompleted: updatedEmojiStatus.isCompleted,
+    //),
+  );
+
+  return Response.json(body: newTodo);
+}
+
+Future<Response> _delete(RequestContext context, String id) async {
+  final dataSource = context.read<EmojiStatusDataSource>();
+  await dataSource.delete(id);
+  return Response(statusCode: HttpStatus.noContent);
+}
+
+Future<Response> _get2(RequestContext context) async {
+  final emojiStatusDataSource = context.read<EmojiStatusDataSource>();
+  final data = emojiStatusDataSource.readAll();
+  return Response.json(body: data);
+
   final emojiStatus = context.read<EmojiStatus>();
 
   final uri = context.request.uri;
@@ -51,13 +81,13 @@ Future<Response> _get(RequestContext context) async {
   return Response.json(body: emojiStatus.toJson());
 }
 
-Future<Response> _post(RequestContext context) async {
+Future<Response> _post2(RequestContext context) async {
   final body = await context.request.json();
 
   return Response.json(body: body);
 }
 
-Future<Response> _put(RequestContext context) async {
+Future<Response> _put2(RequestContext context) async {
   // Access the incoming request.
   final request = context.request;
 
@@ -79,6 +109,6 @@ Future<Response> _patch(RequestContext context) async {
   return Response(body: 'patch');
 }
 
-Future<Response> _delete(RequestContext context) async {
+Future<Response> _delete2(RequestContext context) async {
   return Response(body: 'delete');
 }
